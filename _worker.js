@@ -11,8 +11,12 @@ export default {
         DoH = match[1];
       }
     }
+    // Determine the expected URL path for DoH requests (can be overridden by environment variables)
     DoH路径 = env.PATH || env.TOKEN || DoH路径;//DoH路径也单独设置 变量PATH
     if (DoH路径.includes("/")) DoH路径 = DoH路径.split("/")[1];
+    
+    // --- THIS IS WHERE THE SCRIPT READS THE PATH FROM THE CLIENT REQUEST ---
+    // Extract the URL, pathname (path), and hostname from the incoming request
     const url = new URL(request.url);
     const path = url.pathname;
     const hostname = url.hostname;
@@ -29,6 +33,7 @@ export default {
       });
     }
 
+    // If the client's request path matches the configured DoH path, process it as a DoH request
     // 如果请求路径，则作为 DoH 服务器处理
     if (path === `/${DoH路径}`) {
       return await DOHRequest(request);
